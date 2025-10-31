@@ -1,77 +1,91 @@
-# 🏭 半導體製造良率預測系統
+# 🏭 Semiconductor Yield Prediction System
 
-使用機器學習預測半導體製程良率,提早偵測不良品,優化生產效率。
+A machine learning system for predicting semiconductor manufacturing yield, detecting defective products early, and optimizing production efficiency.
 
-## 📊 專案概述
+## 📊 Project Overview
 
-- **數據集**: SECOM Dataset (1567 樣本, 590 特徵)
-- **目標**: 預測產品是否為不良品 (二分類)
-- **挑戰**: 高維度、缺失值多、類別不平衡 (不良品僅 6.5%)
-- **最佳模型**: XGBoost (F1=0.78, AUC=0.92)
+- **Dataset**: SECOM Dataset (1567 samples, 590 features)
 
-## 🚀 快速開始
+- **Objective**: Predict whether a product is defective (binary classification)
 
-### 安裝依賴
+- **Challenges**: High dimensionality, many missing values, severe class imbalance (only 6.5% defective samples)
+
+- **Best Model**: XGBoost (F1 = 0.78, AUC = 0.92)
+
+## 🚀 Quick Start
+
+### Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 訓練模型
+### Train the Model
 ```bash
 python src/model_training.py
 ```
 
-### 啟動 API 服務
+### Launch API Service
 ```bash
 cd api
 python app.py
 ```
 
-API 將運行在 `http://localhost:8000`
 
-### Docker 部署
+The API will be available at http://localhost:8000
+
+### Deploy with Docker
 ```bash
 docker build -t yield-predictor .
 docker run -p 8000:8000 yield-predictor
 ```
 
-## 📁 專案結構
+## 📁 Project Structure
 ```
 semiconductor-yield-prediction/
-├── data/               # 數據檔案
-├── notebooks/          # Jupyter notebooks (EDA, 建模)
-├── src/                # 核心程式碼
+├── data/               # Raw and processed data
+├── notebooks/          # Jupyter notebooks (EDA, modeling)
+├── src/                # Core source code
 │   ├── data_preprocessing.py
 │   ├── feature_engineering.py
 │   └── model_training.py
-├── api/                # FastAPI 服務
-├── models/             # 訓練好的模型
-├── outputs/            # 圖表和報告
-└── tests/              # 單元測試
+├── api/                # FastAPI service
+├── models/             # Trained model files
+├── outputs/            # Figures and reports
+└── tests/              # Unit tests
 ```
 
-## 🔧 核心功能
+## 🔧 Core Features
 
-### 1. 數據預處理
-- 缺失值處理 (中位數填充)
-- 異常值偵測 (Isolation Forest)
-- 特徵標準化
+### 1. Data Preprocessing
 
-### 2. 特徵工程
-- 移除高度相關特徵 (減少多重共線性)
-- Random Forest 特徵重要性選擇
-- 交互特徵生成
+- Missing value imputation (median fill)
 
-### 3. 模型訓練
-- 處理類別不平衡 (SMOTE + Under-sampling)
-- 比較多個模型 (RF, XGBoost, LightGBM)
-- 超參數優化
-- 交叉驗證
+- Outlier detection (Isolation Forest)
 
-### 4. API 使用範例
-### 單筆預測
+- Feature standardization
 
-**請求:**
+### 2. Feature Engineering
+
+- Remove highly correlated features (reduce multicollinearity)
+
+- Feature selection via Random Forest importance
+
+- Generate interaction features
+
+### 3. Model Training
+
+- Handle class imbalance (SMOTE + under-sampling)
+
+- Compare multiple models (RF, XGBoost, LightGBM)
+
+- Hyperparameter optimization
+
+- Cross-validation
+
+### ⚙️ API Examples
+### Single Prediction
+
+**Request::**
 ```bash
 curl -X POST "http://localhost:8000/predict" \
   -H "Content-Type: application/json" \
@@ -91,7 +105,7 @@ curl -X POST "http://localhost:8000/predict" \
   }'
 ```
 
-**回應:**
+**Response:**
 ```json
 {
   "prediction": "Defect",
@@ -102,9 +116,9 @@ curl -X POST "http://localhost:8000/predict" \
 }
 ```
 
-### 批次預測
+### Batch Prediction
 
-**請求:**
+**Request:**
 ```bash
 curl -X POST "http://localhost:8000/predict/batch" \
   -H "Content-Type: application/json" \
@@ -138,7 +152,7 @@ curl -X POST "http://localhost:8000/predict/batch" \
   }'
 ```
 
-**回應:**
+**Response:**
 ```json
 {
   "predictions": [
@@ -163,43 +177,56 @@ curl -X POST "http://localhost:8000/predict/batch" \
 }
 ```
 
-## 📈 模型表現
-
+## 📈 Model Performance
 | Model | ROC-AUC | F1 Score | Precision | Recall |
 |-------|---------|----------|-----------|--------|
 | Random Forest | 0.89 | 0.72 | 0.71 | 0.73 |
 | **XGBoost** | **0.92** | **0.78** | **0.76** | **0.80** |
 | LightGBM | 0.90 | 0.75 | 0.73 | 0.77 |
 
-## 🎯 業務價值
+## 🎯 Business Value
 
-1. **提早偵測不良品**: 在產線上即時預測,減少 30% 不良品流出
-2. **降低成本**: 減少返工和材料浪費
-3. **優化製程**: 識別影響良率的關鍵因子,改善生產參數
-4. **決策支援**: 提供數據驅動的製程調整建議
+1. **Early Defect Detection**: Predict defective products in real time, reducing defect outflow by up to 30%.
 
-## 📊 關鍵發現
+2. **Cost Reduction**: Minimize rework and material waste.
 
-Top 5 影響良率的感測器:
-1. 溫度控制 (sensor_27)
-2. 壓力穩定性 (sensor_45)
-3. 蝕刻時間 (sensor_12)
-4. 化學濃度 (sensor_33)
-5. 設備振動 (sensor_58)
+3. **Process Optimization**: Identify key factors affecting yield and improve production parameters.
 
-## 🔄 未來改進
+4. **Decision Support**: Enable data-driven process adjustments and insights.
 
-- [ ] 加入 LSTM 處理時序依賴
-- [ ] SHAP 值解釋模型預測
-- [ ] 與 MES 系統整合
-- [ ] 實時監控儀表板 (Grafana)
-- [ ] 模型 Drift 偵測與自動重訓
+## 📊 Key Insights
 
-## 👨‍💻 作者
+### Top 5 sensors impacting yield:
 
-[Mandy] - Data Scientist  
-GitHub: [[singyichen](https://github.com/singyichen)]  
-Email: [ms.mandy610425@gmail.com]
+1. Temperature Control (sensor_27)
+
+2. Pressure Stability (sensor_45)
+
+3. Etching Time (sensor_12)
+
+4. Chemical Concentration (sensor_33)
+
+5. Equipment Vibration (sensor_58)
+
+🔄 Future Improvements
+
+ Integrate LSTM for temporal dependency modeling
+
+ Apply SHAP for explainable AI insights
+
+ Integrate with MES systems
+
+ Real-time monitoring dashboard (Grafana)
+
+ Model drift detection & automatic retraining
+
+## 👩‍💻 Author
+
+[Mandy] – Data Scientist
+
+GitHub: [singyichen](https://github.com/singyichen)
+
+Email: ms.mandy610425@gmail.com
 
 ## 📝 License
 
